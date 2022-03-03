@@ -1,0 +1,5 @@
+- name: Test DHCP 
+  hosts: ztp-server
+  gather_facts: true
+  roles: 
+    - name: mihudec.dhcp-isc

@@ -1,1 +1,6 @@
 ---
+- name: Restart DHCPD Service
+  service:
+    name: isc-dhcp-server.service
+    state: restarted
+  listen: restart_dhcpd

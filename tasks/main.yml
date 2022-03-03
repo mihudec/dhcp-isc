@@ -1,1 +1,52 @@
 ---
+- name: Template DHCP Candidate Config
+  ansible.builtin.template:
+    src: 'dhcpd.conf.j2'
+    dest: "{{ config_dir }}/{{ config_filename }}.candidate"
+    owner: "{{ owner }}"
+    group: "{{ group }}"
+    mode: "{{ mode }}"
+    backup: "{{ dhcpd_backup_config }}"
+  vars: 
+    config_dir: "{{ dhcpd_config_dir }}"
+    config_filename: "{{ dhcpd_config_file_name }}"
+    owner: "{{ dhcpd_config_file_owner }}"
+    group: "{{ dhcpd_config_file_group }}"
+    mode: "{{ dhcpd_config_file_mode }}"
+  register: config_template_result
+
+- name: Test DHCP Candidate Config
+  shell: "dhcpd -t -cf {{ config_dir }}/{{ config_filename }}.candidate"
+  vars: 
+    config_dir: "{{ dhcpd_config_dir }}"
+    config_filename: "{{ dhcpd_config_file_name }}"
+  changed_when: false
+  register: test_config_result
+
+- name: Apply New Config
+  block:
+    - name: Assert DHCP Candidate Config is Valid
+      assert:
+        that: test_config_result.failed is false
+
+    - name: Backup DHCP Current Config
+      ansible.builtin.copy: 
+        remote_src: true
+        src: "{{ config_dir }}/{{ config_filename }}"
+        dest: "{{ config_dir }}/{{ config_filename }}.backup"
+      vars: 
+        config_dir: "{{ dhcpd_config_dir }}"
+        config_filename: "{{ dhcpd_config_file_name }}"
+      
+
+    - name: Promote DHCP Candidate Config
+      ansible.builtin.copy: 
+        remote_src: true
+        src: "{{ config_dir }}/{{ config_filename }}.candidate"
+        dest: "{{ config_dir }}/{{ config_filename }}"
+      vars: 
+        config_dir: "{{ dhcpd_config_dir }}"
+        config_filename: "{{ dhcpd_config_file_name }}"
+      notify: restart_dhcpd
+  when: 
+    - (config_template_result.changed is sameas true)

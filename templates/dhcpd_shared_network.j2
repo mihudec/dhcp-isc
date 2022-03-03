@@ -1,0 +1,9 @@
+{% from '_macros.j2' import dhcpSubnet with context %}
+
+{% if dhcpd_shared_network | default(none) is not none %}
+shared-network {{ dhcpd_shared_network.name }} {
+{%   for dhcp_subnet in dhcpd_shared_network.subnets %}
+{{ dhcpSubnet(dhcp_subnet) | indent(2, true) }}
+{%   endfor %}
+}
+{% endif %}

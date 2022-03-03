@@ -1,5 +1,8 @@
 ---
 - hosts: localhost
-  remote_user: root
+  remote_user: ansible
   roles:
-    - name: "<role_name>"
+    - name: mihudec.dhcp-isc
+      vars: 
+        dhcpd_config_dir: "{{ playbook_dir }}/outputs"
+        dhcpd_hadle_service_restart: false

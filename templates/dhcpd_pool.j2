@@ -1,0 +1,6 @@
+{% from '_macros.j2' import dhcpCommonOptions with context %}
+{% if dhcp_pool | default(none) is not none %}
+pool {
+{{ dhcpCommonOptions(dhcp_pool) | indent(2, true) -}}
+}
+{% endif %}

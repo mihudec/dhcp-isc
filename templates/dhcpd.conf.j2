@@ -1,0 +1,26 @@
+{% from '_macros.j2' import dhcpGlobalOption, dhcpSubnet, dhcpPool with context %}
+### Global Options
+{% for option in dhcpd_global_options | sort(attribute='name') %}
+{{ dhcpGlobalOption(option) }}
+{% endfor %}
+
+### Client Classes
+{% if dhcpd_classes | default(none) is not none %}
+{%   for class in dhcpd_classes %}
+class "{{ class.name }}" {
+{% if class.config | default(none) is not none %}
+  {{ class.config }};
+{% endif %}
+}
+{%   endfor %}
+{% endif %}
+
+### Shared Networks
+{% for dhcpd_shared_network in dhcpd_shared_networks %}
+{%   include 'dhcpd_shared_network.j2' | indent(2, false) %}
+{% endfor %}
+
+### Subnets
+{% for dhcp_subnet in dhcpd_subnets %}
+{{ dhcpSubnet(dhcp_subnet) }}
+{% endfor %}

@@ -1,0 +1,33 @@
+{% set quoted_options = [
+  'domain-name'
+  ]
+%}
+
+
+{% macro dhcpOption(option, width=40) -%}
+{%   if option.name in quoted_options or option.quote | default(false) is sameas true %}
+option {{ option.name.ljust(width) }} "{{ option.value }}";
+{%-   else %}
+option {{ option.name.ljust(width) }} {{ option.value }};
+{%-   endif %}
+{%- endmacro %}
+
+{% macro dhcpGlobalOption(option) -%}
+{%   if option.name in quoted_options or option.quote | default(false) is sameas true %}
+{{ option.name }}{% if option.value | default(none) is not none %} "{{ option.value }}"{% endif %};
+{%-   else %}
+{{ option.name }}{% if option.value | default(none) is not none %} {{ option.value }}{% endif %};
+{%-   endif %}
+{%- endmacro %}
+
+{% macro dhcpSubnet(dhcp_subnet) %}
+{% include 'dhcpd_subnet.j2' %}
+{% endmacro %}
+
+{% macro dhcpPool(dhcp_pool) %}
+{% include 'dhcpd_pool.j2' %}
+{% endmacro %}
+
+{% macro dhcpCommonOptions(dhcp_common) %}
+{% include 'dhcpd_common_options.j2' %}
+{% endmacro %}

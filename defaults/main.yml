@@ -1,1 +1,15 @@
 ---
+dhcpd_containerized: false
+dhcpd_container_name: Null
+dhcpd_config_dir: '/etc/dhcp'
+dhcpd_config_dir_owner: root
+dhcpd_config_dir_group: root
+dhcpd_config_dir_mode: '0640'
+dhcpd_config_file_name: 'dhcpd.conf'
+dhcpd_config_file_owner: root
+dhcpd_config_file_group: root
+dhcpd_config_file_mode: '0640'
+
+dhcpd_backup_config: false
+dhcpd_hadle_service_restart: true
+

@@ -1,0 +1,18 @@
+{% from '_macros.j2' import dhcpOption, dhcpSubnet, dhcpPool with context %}
+{%   if dhcp_subnet | default(none) is not none %}
+subnet {{ dhcp_subnet.network | ipaddr('network') }} netmask {{  dhcp_subnet.network | ipaddr('netmask') }} {
+{%     if dhcp_subnet.range | default(none) is not none %}
+  range {{ dhcp_subnet.range }};
+{%     endif  %}
+{%     if dhcp_subnet.options | default(none) is not none %}
+{%       for option in dhcp_subnet.options | sort(attribute='name') %}
+{{ dhcpOption(option) | indent(2, true) }}
+{%       endfor %}
+{%     endif %}
+{%   if dhcp_subnet.pools | default(none) is not none and dhcp_subnet.pools | length > 0 %}
+{%     for dhcp_pool in dhcp_subnet.pools %}
+{{ dhcpPool(dhcp_pool) | indent(2, true) -}}
+{%     endfor %}
+{%   endif %}
+}
+{%   endif %}

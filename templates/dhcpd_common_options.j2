@@ -1,0 +1,17 @@
+{% from '_macros.j2' import dhcpOption with context %}
+{% if dhcp_common | default(none) is not none %}
+{%     if dhcp_common.range | default(none) is not none %}
+  range {{ dhcp_common.range }};
+{%     endif  %}
+{%     if dhcp_common.allow | default(none) is not none %}
+  allow {{ dhcp_common.allow }};
+{%     endif  %}
+{%     if dhcp_common.deny | default(none) is not none %}
+  deny {{ dhcp_common.deny }};
+{%     endif  %}
+{%     if dhcp_common.options | default(none) is not none %}
+{%       for option in dhcp_common.options | sort(attribute='name') %}
+{{ dhcpOption(option) | indent(2, true) }}
+{%       endfor %}
+{%     endif %}
+{% endif %}
